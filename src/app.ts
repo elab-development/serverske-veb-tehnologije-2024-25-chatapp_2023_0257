@@ -1,9 +1,11 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import apiRoutes from './routes/index';
+import { apiLimiter } from './middleware/rateLimiter';
 
 const app: Application = express();
 
+app.use('/api', apiLimiter);
 app.use(cors());
 app.use(express.json());
 
