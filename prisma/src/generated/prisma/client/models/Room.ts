@@ -41,6 +41,8 @@ export type RoomMinAggregateOutputType = {
   name: string | null
   isPrivate: boolean | null
   creatorId: number | null
+  inviteCode: string | null
+  themeColor: string | null
   createdAt: Date | null
 }
 
@@ -49,6 +51,8 @@ export type RoomMaxAggregateOutputType = {
   name: string | null
   isPrivate: boolean | null
   creatorId: number | null
+  inviteCode: string | null
+  themeColor: string | null
   createdAt: Date | null
 }
 
@@ -57,6 +61,8 @@ export type RoomCountAggregateOutputType = {
   name: number
   isPrivate: number
   creatorId: number
+  inviteCode: number
+  themeColor: number
   createdAt: number
   _all: number
 }
@@ -77,6 +83,8 @@ export type RoomMinAggregateInputType = {
   name?: true
   isPrivate?: true
   creatorId?: true
+  inviteCode?: true
+  themeColor?: true
   createdAt?: true
 }
 
@@ -85,6 +93,8 @@ export type RoomMaxAggregateInputType = {
   name?: true
   isPrivate?: true
   creatorId?: true
+  inviteCode?: true
+  themeColor?: true
   createdAt?: true
 }
 
@@ -93,6 +103,8 @@ export type RoomCountAggregateInputType = {
   name?: true
   isPrivate?: true
   creatorId?: true
+  inviteCode?: true
+  themeColor?: true
   createdAt?: true
   _all?: true
 }
@@ -188,6 +200,8 @@ export type RoomGroupByOutputType = {
   name: string
   isPrivate: boolean
   creatorId: number
+  inviteCode: string
+  themeColor: string
   createdAt: Date
   _count: RoomCountAggregateOutputType | null
   _avg: RoomAvgAggregateOutputType | null
@@ -219,6 +233,8 @@ export type RoomWhereInput = {
   name?: Prisma.StringFilter<"Room"> | string
   isPrivate?: Prisma.BoolFilter<"Room"> | boolean
   creatorId?: Prisma.IntFilter<"Room"> | number
+  inviteCode?: Prisma.StringFilter<"Room"> | string
+  themeColor?: Prisma.StringFilter<"Room"> | string
   createdAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   members?: Prisma.RoomMemberListRelationFilter
@@ -230,6 +246,8 @@ export type RoomOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  themeColor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   creator?: Prisma.UserOrderByWithRelationInput
   members?: Prisma.RoomMemberOrderByRelationAggregateInput
@@ -238,23 +256,27 @@ export type RoomOrderByWithRelationInput = {
 
 export type RoomWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  inviteCode?: string
   AND?: Prisma.RoomWhereInput | Prisma.RoomWhereInput[]
   OR?: Prisma.RoomWhereInput[]
   NOT?: Prisma.RoomWhereInput | Prisma.RoomWhereInput[]
   name?: Prisma.StringFilter<"Room"> | string
   isPrivate?: Prisma.BoolFilter<"Room"> | boolean
   creatorId?: Prisma.IntFilter<"Room"> | number
+  themeColor?: Prisma.StringFilter<"Room"> | string
   createdAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   members?: Prisma.RoomMemberListRelationFilter
   messages?: Prisma.MessageListRelationFilter
-}, "id">
+}, "id" | "inviteCode">
 
 export type RoomOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  themeColor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.RoomCountOrderByAggregateInput
   _avg?: Prisma.RoomAvgOrderByAggregateInput
@@ -271,12 +293,16 @@ export type RoomScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Room"> | string
   isPrivate?: Prisma.BoolWithAggregatesFilter<"Room"> | boolean
   creatorId?: Prisma.IntWithAggregatesFilter<"Room"> | number
+  inviteCode?: Prisma.StringWithAggregatesFilter<"Room"> | string
+  themeColor?: Prisma.StringWithAggregatesFilter<"Room"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Room"> | Date | string
 }
 
 export type RoomCreateInput = {
   name: string
   isPrivate?: boolean
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutCreatedRoomsInput
   members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput
@@ -288,6 +314,8 @@ export type RoomUncheckedCreateInput = {
   name: string
   isPrivate?: boolean
   creatorId: number
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutRoomInput
@@ -296,6 +324,8 @@ export type RoomUncheckedCreateInput = {
 export type RoomUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutCreatedRoomsNestedInput
   members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput
@@ -307,6 +337,8 @@ export type RoomUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creatorId?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutRoomNestedInput
@@ -317,12 +349,16 @@ export type RoomCreateManyInput = {
   name: string
   isPrivate?: boolean
   creatorId: number
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
 }
 
 export type RoomUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -331,6 +367,8 @@ export type RoomUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creatorId?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -349,6 +387,8 @@ export type RoomCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  themeColor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -362,6 +402,8 @@ export type RoomMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  themeColor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -370,6 +412,8 @@ export type RoomMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  themeColor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -460,6 +504,8 @@ export type RoomUpdateOneRequiredWithoutMessagesNestedInput = {
 export type RoomCreateWithoutCreatorInput = {
   name: string
   isPrivate?: boolean
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput
   messages?: Prisma.MessageCreateNestedManyWithoutRoomInput
@@ -469,6 +515,8 @@ export type RoomUncheckedCreateWithoutCreatorInput = {
   id?: number
   name: string
   isPrivate?: boolean
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutRoomInput
@@ -508,12 +556,16 @@ export type RoomScalarWhereInput = {
   name?: Prisma.StringFilter<"Room"> | string
   isPrivate?: Prisma.BoolFilter<"Room"> | boolean
   creatorId?: Prisma.IntFilter<"Room"> | number
+  inviteCode?: Prisma.StringFilter<"Room"> | string
+  themeColor?: Prisma.StringFilter<"Room"> | string
   createdAt?: Prisma.DateTimeFilter<"Room"> | Date | string
 }
 
 export type RoomCreateWithoutMembersInput = {
   name: string
   isPrivate?: boolean
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutCreatedRoomsInput
   messages?: Prisma.MessageCreateNestedManyWithoutRoomInput
@@ -524,6 +576,8 @@ export type RoomUncheckedCreateWithoutMembersInput = {
   name: string
   isPrivate?: boolean
   creatorId: number
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutRoomInput
 }
@@ -547,6 +601,8 @@ export type RoomUpdateToOneWithWhereWithoutMembersInput = {
 export type RoomUpdateWithoutMembersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutCreatedRoomsNestedInput
   messages?: Prisma.MessageUpdateManyWithoutRoomNestedInput
@@ -557,6 +613,8 @@ export type RoomUncheckedUpdateWithoutMembersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creatorId?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUncheckedUpdateManyWithoutRoomNestedInput
 }
@@ -564,6 +622,8 @@ export type RoomUncheckedUpdateWithoutMembersInput = {
 export type RoomCreateWithoutMessagesInput = {
   name: string
   isPrivate?: boolean
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutCreatedRoomsInput
   members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput
@@ -574,6 +634,8 @@ export type RoomUncheckedCreateWithoutMessagesInput = {
   name: string
   isPrivate?: boolean
   creatorId: number
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
   members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput
 }
@@ -597,6 +659,8 @@ export type RoomUpdateToOneWithWhereWithoutMessagesInput = {
 export type RoomUpdateWithoutMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutCreatedRoomsNestedInput
   members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput
@@ -607,6 +671,8 @@ export type RoomUncheckedUpdateWithoutMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creatorId?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput
 }
@@ -615,12 +681,16 @@ export type RoomCreateManyCreatorInput = {
   id?: number
   name: string
   isPrivate?: boolean
+  inviteCode?: string
+  themeColor?: string
   createdAt?: Date | string
 }
 
 export type RoomUpdateWithoutCreatorInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput
   messages?: Prisma.MessageUpdateManyWithoutRoomNestedInput
@@ -630,6 +700,8 @@ export type RoomUncheckedUpdateWithoutCreatorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutRoomNestedInput
@@ -639,6 +711,8 @@ export type RoomUncheckedUpdateManyWithoutCreatorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  themeColor?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -687,6 +761,8 @@ export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   name?: boolean
   isPrivate?: boolean
   creatorId?: boolean
+  inviteCode?: boolean
+  themeColor?: boolean
   createdAt?: boolean
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Room$membersArgs<ExtArgs>
@@ -699,6 +775,8 @@ export type RoomSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   isPrivate?: boolean
   creatorId?: boolean
+  inviteCode?: boolean
+  themeColor?: boolean
   createdAt?: boolean
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["room"]>
@@ -708,6 +786,8 @@ export type RoomSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   isPrivate?: boolean
   creatorId?: boolean
+  inviteCode?: boolean
+  themeColor?: boolean
   createdAt?: boolean
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["room"]>
@@ -717,10 +797,12 @@ export type RoomSelectScalar = {
   name?: boolean
   isPrivate?: boolean
   creatorId?: boolean
+  inviteCode?: boolean
+  themeColor?: boolean
   createdAt?: boolean
 }
 
-export type RoomOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isPrivate" | "creatorId" | "createdAt", ExtArgs["result"]["room"]>
+export type RoomOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isPrivate" | "creatorId" | "inviteCode" | "themeColor" | "createdAt", ExtArgs["result"]["room"]>
 export type RoomInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Room$membersArgs<ExtArgs>
@@ -746,6 +828,8 @@ export type $RoomPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     isPrivate: boolean
     creatorId: number
+    inviteCode: string
+    themeColor: string
     createdAt: Date
   }, ExtArgs["result"]["room"]>
   composites: {}
@@ -1177,6 +1261,8 @@ export interface RoomFieldRefs {
   readonly name: Prisma.FieldRef<"Room", 'String'>
   readonly isPrivate: Prisma.FieldRef<"Room", 'Boolean'>
   readonly creatorId: Prisma.FieldRef<"Room", 'Int'>
+  readonly inviteCode: Prisma.FieldRef<"Room", 'String'>
+  readonly themeColor: Prisma.FieldRef<"Room", 'String'>
   readonly createdAt: Prisma.FieldRef<"Room", 'DateTime'>
 }
     

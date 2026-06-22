@@ -14,6 +14,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    // Zatvaramo konekciju tvoje glavne instance kada seed završi
     await prisma.$disconnect();
   });

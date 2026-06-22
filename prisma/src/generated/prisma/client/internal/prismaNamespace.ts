@@ -832,6 +832,7 @@ export const UserScalarFieldEnum = {
   passwordHash: 'passwordHash',
   avatarUrl: 'avatarUrl',
   roleId: 'roleId',
+  bio: 'bio',
   createdAt: 'createdAt'
 } as const
 
@@ -843,6 +844,8 @@ export const RoomScalarFieldEnum = {
   name: 'name',
   isPrivate: 'isPrivate',
   creatorId: 'creatorId',
+  inviteCode: 'inviteCode',
+  themeColor: 'themeColor',
   createdAt: 'createdAt'
 } as const
 

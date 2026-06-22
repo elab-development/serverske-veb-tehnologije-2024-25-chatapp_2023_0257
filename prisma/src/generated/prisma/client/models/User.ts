@@ -43,6 +43,7 @@ export type UserMinAggregateOutputType = {
   passwordHash: string | null
   avatarUrl: string | null
   roleId: number | null
+  bio: string | null
   createdAt: Date | null
 }
 
@@ -53,6 +54,7 @@ export type UserMaxAggregateOutputType = {
   passwordHash: string | null
   avatarUrl: string | null
   roleId: number | null
+  bio: string | null
   createdAt: Date | null
 }
 
@@ -63,6 +65,7 @@ export type UserCountAggregateOutputType = {
   passwordHash: number
   avatarUrl: number
   roleId: number
+  bio: number
   createdAt: number
   _all: number
 }
@@ -85,6 +88,7 @@ export type UserMinAggregateInputType = {
   passwordHash?: true
   avatarUrl?: true
   roleId?: true
+  bio?: true
   createdAt?: true
 }
 
@@ -95,6 +99,7 @@ export type UserMaxAggregateInputType = {
   passwordHash?: true
   avatarUrl?: true
   roleId?: true
+  bio?: true
   createdAt?: true
 }
 
@@ -105,6 +110,7 @@ export type UserCountAggregateInputType = {
   passwordHash?: true
   avatarUrl?: true
   roleId?: true
+  bio?: true
   createdAt?: true
   _all?: true
 }
@@ -202,6 +208,7 @@ export type UserGroupByOutputType = {
   passwordHash: string
   avatarUrl: string | null
   roleId: number
+  bio: string | null
   createdAt: Date
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
@@ -235,6 +242,7 @@ export type UserWhereInput = {
   passwordHash?: Prisma.StringFilter<"User"> | string
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   roleId?: Prisma.IntFilter<"User"> | number
+  bio?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   createdRooms?: Prisma.RoomListRelationFilter
@@ -249,6 +257,7 @@ export type UserOrderByWithRelationInput = {
   passwordHash?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   roleId?: Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   role?: Prisma.RoleOrderByWithRelationInput
   createdRooms?: Prisma.RoomOrderByRelationAggregateInput
@@ -266,6 +275,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   passwordHash?: Prisma.StringFilter<"User"> | string
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   roleId?: Prisma.IntFilter<"User"> | number
+  bio?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   createdRooms?: Prisma.RoomListRelationFilter
@@ -280,6 +290,7 @@ export type UserOrderByWithAggregationInput = {
   passwordHash?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   roleId?: Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
@@ -298,6 +309,7 @@ export type UserScalarWhereWithAggregatesInput = {
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   roleId?: Prisma.IntWithAggregatesFilter<"User"> | number
+  bio?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
 
@@ -306,6 +318,7 @@ export type UserCreateInput = {
   email: string
   passwordHash: string
   avatarUrl?: string | null
+  bio?: string | null
   createdAt?: Date | string
   role: Prisma.RoleCreateNestedOneWithoutUsersInput
   createdRooms?: Prisma.RoomCreateNestedManyWithoutCreatorInput
@@ -320,6 +333,7 @@ export type UserUncheckedCreateInput = {
   passwordHash: string
   avatarUrl?: string | null
   roleId: number
+  bio?: string | null
   createdAt?: Date | string
   createdRooms?: Prisma.RoomUncheckedCreateNestedManyWithoutCreatorInput
   rooms?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutUserInput
@@ -331,6 +345,7 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
   createdRooms?: Prisma.RoomUpdateManyWithoutCreatorNestedInput
@@ -345,6 +360,7 @@ export type UserUncheckedUpdateInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   roleId?: Prisma.IntFieldUpdateOperationsInput | number
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdRooms?: Prisma.RoomUncheckedUpdateManyWithoutCreatorNestedInput
   rooms?: Prisma.RoomMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -358,6 +374,7 @@ export type UserCreateManyInput = {
   passwordHash: string
   avatarUrl?: string | null
   roleId: number
+  bio?: string | null
   createdAt?: Date | string
 }
 
@@ -366,6 +383,7 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -376,6 +394,7 @@ export type UserUncheckedUpdateManyInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   roleId?: Prisma.IntFieldUpdateOperationsInput | number
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -396,6 +415,7 @@ export type UserCountOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   roleId?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -411,6 +431,7 @@ export type UserMaxOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   roleId?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -421,6 +442,7 @@ export type UserMinOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   roleId?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -535,6 +557,7 @@ export type UserCreateWithoutRoleInput = {
   email: string
   passwordHash: string
   avatarUrl?: string | null
+  bio?: string | null
   createdAt?: Date | string
   createdRooms?: Prisma.RoomCreateNestedManyWithoutCreatorInput
   rooms?: Prisma.RoomMemberCreateNestedManyWithoutUserInput
@@ -547,6 +570,7 @@ export type UserUncheckedCreateWithoutRoleInput = {
   email: string
   passwordHash: string
   avatarUrl?: string | null
+  bio?: string | null
   createdAt?: Date | string
   createdRooms?: Prisma.RoomUncheckedCreateNestedManyWithoutCreatorInput
   rooms?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutUserInput
@@ -589,6 +613,7 @@ export type UserScalarWhereInput = {
   passwordHash?: Prisma.StringFilter<"User"> | string
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   roleId?: Prisma.IntFilter<"User"> | number
+  bio?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
 
@@ -597,6 +622,7 @@ export type UserCreateWithoutCreatedRoomsInput = {
   email: string
   passwordHash: string
   avatarUrl?: string | null
+  bio?: string | null
   createdAt?: Date | string
   role: Prisma.RoleCreateNestedOneWithoutUsersInput
   rooms?: Prisma.RoomMemberCreateNestedManyWithoutUserInput
@@ -610,6 +636,7 @@ export type UserUncheckedCreateWithoutCreatedRoomsInput = {
   passwordHash: string
   avatarUrl?: string | null
   roleId: number
+  bio?: string | null
   createdAt?: Date | string
   rooms?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutUserInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
@@ -636,6 +663,7 @@ export type UserUpdateWithoutCreatedRoomsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
   rooms?: Prisma.RoomMemberUpdateManyWithoutUserNestedInput
@@ -649,6 +677,7 @@ export type UserUncheckedUpdateWithoutCreatedRoomsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   roleId?: Prisma.IntFieldUpdateOperationsInput | number
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rooms?: Prisma.RoomMemberUncheckedUpdateManyWithoutUserNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -659,6 +688,7 @@ export type UserCreateWithoutRoomsInput = {
   email: string
   passwordHash: string
   avatarUrl?: string | null
+  bio?: string | null
   createdAt?: Date | string
   role: Prisma.RoleCreateNestedOneWithoutUsersInput
   createdRooms?: Prisma.RoomCreateNestedManyWithoutCreatorInput
@@ -672,6 +702,7 @@ export type UserUncheckedCreateWithoutRoomsInput = {
   passwordHash: string
   avatarUrl?: string | null
   roleId: number
+  bio?: string | null
   createdAt?: Date | string
   createdRooms?: Prisma.RoomUncheckedCreateNestedManyWithoutCreatorInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
@@ -698,6 +729,7 @@ export type UserUpdateWithoutRoomsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
   createdRooms?: Prisma.RoomUpdateManyWithoutCreatorNestedInput
@@ -711,6 +743,7 @@ export type UserUncheckedUpdateWithoutRoomsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   roleId?: Prisma.IntFieldUpdateOperationsInput | number
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdRooms?: Prisma.RoomUncheckedUpdateManyWithoutCreatorNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -721,6 +754,7 @@ export type UserCreateWithoutMessagesInput = {
   email: string
   passwordHash: string
   avatarUrl?: string | null
+  bio?: string | null
   createdAt?: Date | string
   role: Prisma.RoleCreateNestedOneWithoutUsersInput
   createdRooms?: Prisma.RoomCreateNestedManyWithoutCreatorInput
@@ -734,6 +768,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   passwordHash: string
   avatarUrl?: string | null
   roleId: number
+  bio?: string | null
   createdAt?: Date | string
   createdRooms?: Prisma.RoomUncheckedCreateNestedManyWithoutCreatorInput
   rooms?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutUserInput
@@ -760,6 +795,7 @@ export type UserUpdateWithoutMessagesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
   createdRooms?: Prisma.RoomUpdateManyWithoutCreatorNestedInput
@@ -773,6 +809,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   roleId?: Prisma.IntFieldUpdateOperationsInput | number
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdRooms?: Prisma.RoomUncheckedUpdateManyWithoutCreatorNestedInput
   rooms?: Prisma.RoomMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -784,6 +821,7 @@ export type UserCreateManyRoleInput = {
   email: string
   passwordHash: string
   avatarUrl?: string | null
+  bio?: string | null
   createdAt?: Date | string
 }
 
@@ -792,6 +830,7 @@ export type UserUpdateWithoutRoleInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdRooms?: Prisma.RoomUpdateManyWithoutCreatorNestedInput
   rooms?: Prisma.RoomMemberUpdateManyWithoutUserNestedInput
@@ -804,6 +843,7 @@ export type UserUncheckedUpdateWithoutRoleInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdRooms?: Prisma.RoomUncheckedUpdateManyWithoutCreatorNestedInput
   rooms?: Prisma.RoomMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -816,6 +856,7 @@ export type UserUncheckedUpdateManyWithoutRoleInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -875,6 +916,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   passwordHash?: boolean
   avatarUrl?: boolean
   roleId?: boolean
+  bio?: boolean
   createdAt?: boolean
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   createdRooms?: boolean | Prisma.User$createdRoomsArgs<ExtArgs>
@@ -890,6 +932,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   avatarUrl?: boolean
   roleId?: boolean
+  bio?: boolean
   createdAt?: boolean
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -901,6 +944,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   avatarUrl?: boolean
   roleId?: boolean
+  bio?: boolean
   createdAt?: boolean
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -912,10 +956,11 @@ export type UserSelectScalar = {
   passwordHash?: boolean
   avatarUrl?: boolean
   roleId?: boolean
+  bio?: boolean
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "passwordHash" | "avatarUrl" | "roleId" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "passwordHash" | "avatarUrl" | "roleId" | "bio" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   createdRooms?: boolean | Prisma.User$createdRoomsArgs<ExtArgs>
@@ -945,6 +990,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     passwordHash: string
     avatarUrl: string | null
     roleId: number
+    bio: string | null
     createdAt: Date
   }, ExtArgs["result"]["user"]>
   composites: {}
@@ -1379,6 +1425,7 @@ export interface UserFieldRefs {
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly avatarUrl: Prisma.FieldRef<"User", 'String'>
   readonly roleId: Prisma.FieldRef<"User", 'Int'>
+  readonly bio: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     

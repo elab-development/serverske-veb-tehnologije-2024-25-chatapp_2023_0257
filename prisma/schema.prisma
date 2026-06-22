@@ -4,8 +4,8 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
@@ -48,7 +48,7 @@ model Room {
   members    RoomMember[]
   messages   Message[]
   inviteCode String       @unique @default(uuid())
-  themeColor String  @default("#ffffff") // Po defaultu je bela
+  themeColor String       @default("#ffffff") // Po defaultu je bela
   createdAt  DateTime     @default(now())
 }
 
