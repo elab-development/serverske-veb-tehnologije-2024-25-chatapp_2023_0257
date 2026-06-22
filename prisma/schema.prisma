@@ -71,4 +71,5 @@ model Message {
   room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  isDeleted Boolean @default(false)
 }
