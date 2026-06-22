@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoleName {
+  ADMIN
+  PREMIUM
+  USER
+}
+
+model Role {
+  id    Int      @id @default(autoincrement())
+  name  RoleName @unique
+  users User[]
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  username     String       @unique
+  email        String       @unique
+  passwordHash String
+  avatarUrl    String?
+  roleId       Int
+  role         Role         @relation(fields: [roleId], references: [id])
+  createdRooms Room[]       @relation("RoomCreator")
+  rooms        RoomMember[]
+  messages     Message[]
+  createdAt    DateTime     @default(now())
+}
+
+model Room {
+  id         Int          @id @default(autoincrement())
+  name       String
+  isPrivate  Boolean      @default(false)
+  creatorId  Int
+  creator    User         @relation("RoomCreator", fields: [creatorId], references: [id])
+  members    RoomMember[]
+  messages   Message[]
+  createdAt  DateTime     @default(now())
+}
+
+model RoomMember {
+  roomId   Int
+  userId   Int
+  room     Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt DateTime @default(now())
+
+  @@id([roomId, userId]) 
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  roomId    Int
+  senderId  Int
+  content   String
+  isBot     Boolean  @default(false)
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
