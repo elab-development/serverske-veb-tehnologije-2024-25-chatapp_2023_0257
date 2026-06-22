@@ -35,7 +35,7 @@ model User {
   createdRooms Room[]       @relation("RoomCreator")
   rooms        RoomMember[]
   messages     Message[]
-  bio         String?
+  bio          String?
   createdAt    DateTime     @default(now())
 }
 
@@ -47,6 +47,8 @@ model Room {
   creator    User         @relation("RoomCreator", fields: [creatorId], references: [id])
   members    RoomMember[]
   messages   Message[]
+  inviteCode String       @unique @default(uuid())
+  themeColor String  @default("#ffffff") // Po defaultu je bela
   createdAt  DateTime     @default(now())
 }
 
@@ -57,7 +59,7 @@ model RoomMember {
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   joinedAt DateTime @default(now())
 
-  @@id([roomId, userId]) 
+  @@id([roomId, userId])
 }
 
 model Message {
