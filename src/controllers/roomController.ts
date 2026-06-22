@@ -122,7 +122,6 @@ export const searchGifs = async (req: AuthRequest, res: Response): Promise<void>
 };
 
 
-// GET: Preuzimanje invite koda sobe
 export const getInviteCode = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const roomId = Number(req.params.roomId);
