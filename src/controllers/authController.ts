@@ -72,3 +72,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: 'Greška na serveru.' });
   }
 };
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  res.status(200).json({ 
+    message: 'Uspešan logout. Klijent (frontend) sada treba da obriše JWT token iz localStorage-a.' 
+  });
+};

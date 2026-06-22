@@ -35,6 +35,7 @@ model User {
   createdRooms Room[]       @relation("RoomCreator")
   rooms        RoomMember[]
   messages     Message[]
+  bio         String?
   createdAt    DateTime     @default(now())
 }
 

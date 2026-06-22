@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware';
 import prisma from '../config/prisma';
+import { ENV } from '../config/env';
 
 export const getRooms = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -56,5 +57,66 @@ export const getRoomMessages = async (req: AuthRequest, res: Response): Promise<
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ error: 'Greška pri povlačenju poruka.' });
+  }
+};
+
+
+export const updateRoom = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const roomId = Number(req.params.roomId);
+    const { name } = req.body;
+    const userId = req.user!.userId;
+
+    const room = await prisma.room.findUnique({ where: { id: roomId } });
+    if (!room || room.creatorId !== userId) {
+      res.status(403).json({ error: 'Samo kreator može izmeniti sobu.' });
+      return;
+    }
+
+    const updatedRoom = await prisma.room.update({
+      where: { id: roomId },
+      data: { name }
+    });
+
+    res.status(200).json(updatedRoom);
+  } catch (error) {
+    res.status(500).json({ error: 'Greška pri ažuriranju sobe.' });
+  }
+};
+
+export const deleteRoom = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const roomId = Number(req.params.roomId);
+    const userId = req.user!.userId;
+
+    const room = await prisma.room.findUnique({ where: { id: roomId } });
+    if (!room || room.creatorId !== userId) {
+      res.status(403).json({ error: 'Samo kreator može obrisati sobu.' });
+      return;
+    }
+
+    await prisma.room.delete({ where: { id: roomId } });
+
+    res.status(200).json({ message: 'Soba je uspešno obrisana.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Greška pri brisanju sobe.' });
+  }
+};
+
+export const searchGifs = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const query = req.query.q;
+    if (!query) {
+      res.status(400).json({ error: 'Morate uneti termin za pretragu.' });
+      return;
+    }
+
+    const apiKey = ENV.GIPHY_API_KEY
+    const response = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${query}&limit=5`);
+    const data = await response.json();
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Greška pri povlačenju GIF-ova.' });
   }
 };

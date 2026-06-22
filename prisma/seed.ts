@@ -1,4 +1,4 @@
-import prisma from '../config/prisma'; 
+import prisma from '../src/config/prisma'; 
 
 async function main() {
   await prisma.role.upsert({ where: { name: 'ADMIN' }, update: {}, create: { name: 'ADMIN' } });
