@@ -16,5 +16,13 @@ export const setupSockets = (io: Server) => {
         socket.on('disconnect', () => {
             console.log(`Klijent diskonektovan: ${socket.id}`);
         });
+
+        socket.on('typing', (data: { roomId: string; username: string }) => {
+            socket.to(data.roomId).emit('userTyping', { username: data.username });
+        });
+
+        socket.on('stopTyping', (data: { roomId: string; username: string }) => {
+            socket.to(data.roomId).emit('userStoppedTyping', { username: data.username });
+        });
     });
 };
