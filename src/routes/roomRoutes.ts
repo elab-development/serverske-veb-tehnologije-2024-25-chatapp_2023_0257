@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getRooms, createRoom, getRoomMessages, updateRoom, deleteRoom, searchGifs, getInviteCode, joinWithInvite } from '../controllers/roomController';
+import { getRooms, createRoom, getRoomMessages, updateRoom, deleteRoom, searchGifs, getInviteCode, joinWithInvite, updateRoomTheme } from '../controllers/roomController';
 import { sendMessage } from '../controllers/messageController';
 import { authenticate } from '../middleware/authMiddleware';
 
@@ -20,5 +20,8 @@ router.post('/:roomId/messages', sendMessage);
 
 router.post('/join', joinWithInvite); 
 router.get('/:roomId/invite', getInviteCode);
+
+
+router.patch('/:roomId/theme', updateRoomTheme);
 
 export default router;

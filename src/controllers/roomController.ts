@@ -164,3 +164,26 @@ export const joinWithInvite = async (req: AuthRequest, res: Response): Promise<v
         res.status(500).json({ error: 'Greška pri pridruživanju sobi.' });
     }
 };
+
+export const updateRoomTheme = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const roomId = Number(req.params.roomId);
+    const { themeColor } = req.body;
+    const userId = req.user!.userId;
+
+    const room = await prisma.room.findUnique({ where: { id: roomId } });
+    if (!room || room.creatorId !== userId) {
+      res.status(403).json({ error: 'Samo kreator može menjati temu sobe.' });
+      return;
+    }
+
+    const updatedRoom = await prisma.room.update({
+      where: { id: roomId },
+      data: { themeColor }
+    });
+
+    res.status(200).json({ message: 'Tema uspešno promenjena', themeColor: updatedRoom.themeColor });
+  } catch (error) {
+    res.status(500).json({ error: 'Greška pri promeni teme.' });
+  }
+};
