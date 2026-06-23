@@ -60,12 +60,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = generateToken(user.id, user.roleId);
+    const token = generateToken(user.id, user.roleId, user.avatarUrl || null);
 
     res.status(200).json({
       message: 'Uspešan login.',
       token,
-      user: { id: user.id, username: user.username, roleId: user.roleId }
+      user: { id: user.id, username: user.username, roleId: user.roleId, avatarUrl: user.avatarUrl || null }
     });
   } catch (error) {
     console.error('[Auth] Login error:', error);
