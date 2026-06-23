@@ -194,7 +194,6 @@ export function JoinRoomModal({ isOpen, onClose, onJoin }: JoinRoomModalProps) {
         className="w-full max-w-sm rounded-xl overflow-hidden shadow-2xl"
         style={{ background: '#202c33' }}
       >
-        {/* Header */}
         <div
           className="flex items-center justify-between px-5 py-4"
           style={{ background: '#2a3942', borderBottom: '1px solid #3b4a54' }}
