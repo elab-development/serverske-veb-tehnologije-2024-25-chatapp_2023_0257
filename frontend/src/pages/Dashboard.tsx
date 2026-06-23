@@ -4,13 +4,15 @@ import api from '../services/api';
 import { useAuthStore } from '../store/useAuthStore';
 import Sidebar from '../components/chat/Sidebar';
 import ChatWindow from '../components/chat/ChatWindow';
-import { CreateRoomModal, JoinRoomModal } from '../components/chat/RoomModals'; // NOVO
+import { CreateRoomModal, JoinRoomModal } from '../components/chat/RoomModals';
 
 export default function Dashboard() {
-    const { token } = useAuthStore();
+    const { token, user } = useAuthStore();
     const [rooms, setRooms] = useState<any[]>([]);
     const [activeRoom, setActiveRoom] = useState<any | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
+    const [typingUsers, setTypingUsers] = useState<string[]>([]); // NOVO: State za kuckanje
+    
     const socketRef = useRef<Socket | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -18,9 +20,20 @@ export default function Dashboard() {
 
     useEffect(() => {
         socketRef.current = io('http://localhost:5000', { auth: { token } });
+        
         socketRef.current.on('receiveMessage', (msg: any) => {
             setMessages((prev) => [...prev, msg]);
         });
+
+        // NOVO: Osluškivanje soketa za kuckanje
+        socketRef.current.on('userTyping', (data: { username: string }) => {
+            setTypingUsers(prev => prev.includes(data.username) ? prev : [...prev, data.username]);
+        });
+
+        socketRef.current.on('userStoppedTyping', (data: { username: string }) => {
+            setTypingUsers(prev => prev.filter(u => u !== data.username));
+        });
+
         return () => { socketRef.current?.disconnect(); };
     }, [token]);
 
@@ -34,6 +47,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         if (activeRoom) {
+            setTypingUsers([]); // Očisti ko kuca kad promeniš sobu
             api.get(`/rooms/${activeRoom.id}/messages`).then(res => {
                 setMessages(res.data.reverse());
             });
@@ -43,13 +57,64 @@ export default function Dashboard() {
 
     const handleSendMessage = async (content: string) => {
         if (!activeRoom) return;
+
+        const tempId = Date.now();
+        const optimisticMessage = {
+            id: tempId,
+            content: content,
+            senderId: user?.id,
+            createdAt: new Date().toISOString(),
+            sender: { username: user?.username },
+            isSending: true
+        };
+
+        setMessages(prev => [...prev, optimisticMessage]);
+
         try {
             const res = await api.post(`/rooms/${activeRoom.id}/messages`, { content });
-            setMessages(prev => [...prev, res.data]);
-            socketRef.current?.emit('sendMessage', { roomId: activeRoom.id.toString(), message: res.data });
+            const realMessage = res.data;
+            setMessages(prev => prev.map(msg => msg.id === tempId ? realMessage : msg));
+            
+            socketRef.current?.emit('sendMessage', {
+                roomId: activeRoom.id.toString(),
+                message: realMessage
+            });
         } catch (err) {
             console.error('Greška pri slanju', err);
+            setMessages(prev => prev.filter(msg => msg.id !== tempId));
+            alert('Poruka nije poslata, pokušajte ponovo.');
         }
+    };
+
+    // NOVO: Brisanje poruke
+    const handleDeleteMessage = async (messageId: number) => {
+        try {
+            await api.delete(`/rooms/messages/${messageId}`);
+            setMessages(prev => prev.map(msg => 
+                msg.id === messageId ? { ...msg, isDeleted: true, content: 'Ova poruka je obrisana.' } : msg
+            ));
+        } catch (err) {
+            alert('Greška pri brisanju poruke.');
+        }
+    };
+
+    // NOVO: Promena teme
+    const handleUpdateTheme = async (themeColor: string) => {
+        if (!activeRoom) return;
+        try {
+            const res = await api.patch(`/rooms/${activeRoom.id}/theme`, { themeColor });
+            setActiveRoom((prev: any) => ({ ...prev, themeColor: res.data.themeColor }));
+            setRooms(prev => prev.map(r => r.id === activeRoom.id ? { ...r, themeColor: res.data.themeColor } : r));
+        } catch (err) {
+            alert('Samo kreator može menjati boju sobe.');
+        }
+    };
+
+    // NOVO: Emitovanje kuckanja
+    const handleTyping = (isTyping: boolean) => {
+        if (!activeRoom || !user) return;
+        const event = isTyping ? 'typing' : 'stopTyping';
+        socketRef.current?.emit(event, { roomId: activeRoom.id.toString(), username: user.username });
     };
 
     const handleCreateRoom = async (name: string, isPrivate: boolean, themeColor: string) => {
@@ -76,8 +141,9 @@ export default function Dashboard() {
         <div className="flex h-screen overflow-hidden bg-zinc-100 relative">
             {isMobileMenuOpen && (
                 <div
-                    className="md:hidden fixed inset-0 bg-zinc-950/50 z-20 backdrop-blur-sm transition-opacity"
-                    onClick={() => setIsMobileMenuOpen(false)} // Klik van sidebara ga zatvara
+                    className="md:hidden fixed inset-0 z-20 backdrop-blur-sm transition-opacity"
+                    style={{ background: 'rgba(0,0,0,0.5)' }}
+                    onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
 
@@ -87,16 +153,19 @@ export default function Dashboard() {
                 setActiveRoom={setActiveRoom}
                 onOpenCreate={() => setIsCreateOpen(true)}
                 onOpenJoin={() => setIsJoinOpen(true)}
-                className={`absolute md:relative z-30 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-                    }`}
-                onRoomSelectMobile={() => setIsMobileMenuOpen(false)} // Zatvori sidebar kad izaberemo sobu
+                className={`absolute md:relative z-30 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+                onRoomSelectMobile={() => setIsMobileMenuOpen(false)}
             />
 
             <ChatWindow
                 activeRoom={activeRoom}
                 messages={messages}
                 onSendMessage={handleSendMessage}
-                onOpenSidebar={() => setIsMobileMenuOpen(true)} // Prosleđujemo komandu iz header-a
+                onOpenSidebar={() => setIsMobileMenuOpen(true)}
+                onDeleteMessage={handleDeleteMessage}
+                onUpdateTheme={handleUpdateTheme}
+                onTyping={handleTyping}
+                typingUsers={typingUsers}
             />
 
             <CreateRoomModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreate={handleCreateRoom} />

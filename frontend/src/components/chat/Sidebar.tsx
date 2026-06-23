@@ -1,4 +1,4 @@
-import { LogOut, Plus, Hash, Link as LinkIcon } from 'lucide-react';
+import { LogOut, Plus, Hash, Link as LinkIcon, Lock, Search } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 
 interface SidebarProps {
@@ -11,7 +11,11 @@ interface SidebarProps {
   onRoomSelectMobile?: () => void;
 }
 
-export default function Sidebar({ rooms, activeRoom, setActiveRoom, onOpenCreate, onOpenJoin, className = '', onRoomSelectMobile }: SidebarProps) {
+export default function Sidebar({
+  rooms, activeRoom, setActiveRoom,
+  onOpenCreate, onOpenJoin,
+  className = '', onRoomSelectMobile,
+}: SidebarProps) {
   const { user, logout } = useAuthStore();
 
   const handleRoomSelect = (room: any) => {
@@ -20,47 +24,149 @@ export default function Sidebar({ rooms, activeRoom, setActiveRoom, onOpenCreate
   };
 
   return (
-    <div className={`w-72 border-r border-zinc-200 flex flex-col bg-zinc-950 text-zinc-100 shrink-0 h-full ${className}`}>
-      <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900">
+    <div className={`flex flex-col h-full shrink-0 w-72 ${className}`}
+      style={{ background: '#111b21' }}>
+
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between px-4 py-3"
+        style={{ background: '#202c33' }}>
         <div className="flex items-center gap-3">
           {user?.avatarUrl ? (
-             <img src={`http://localhost:5000${user.avatarUrl}`} alt="avatar" className="w-8 h-8 rounded-sm object-cover" />
+            <img
+              src={`http://localhost:5000${user.avatarUrl}`}
+              alt="avatar"
+              className="w-10 h-10 rounded-full object-cover"
+            />
           ) : (
-             <div className="w-8 h-8 rounded-sm bg-blue-600 flex items-center justify-center font-bold text-sm">
-               {user?.username.charAt(0).toUpperCase()}
-             </div>
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white select-none"
+              style={{ background: 'linear-gradient(135deg, #00a884 0%, #0097a7 100%)' }}
+            >
+              {user?.username.charAt(0).toUpperCase()}
+            </div>
           )}
-          <span className="font-semibold tracking-wide text-sm">{user?.username}</span>
-        </div>
-        <button onClick={logout} className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-sm transition-colors">
-          <LogOut size={16} />
-        </button>
-      </div>
-      
-      <div className="p-4 flex-1 overflow-y-auto">
-        <div className="flex justify-between items-center mb-4 text-xs font-bold text-zinc-500 uppercase tracking-widest">
-          <span>Tvoje Sobe</span>
-          <div className="flex gap-1">
-             <button onClick={onOpenJoin} className="p-1 hover:text-zinc-300 hover:bg-zinc-800 rounded-sm transition-colors"><LinkIcon size={14} /></button>
-             <button onClick={onOpenCreate} className="p-1 hover:text-zinc-300 hover:bg-zinc-800 rounded-sm transition-colors"><Plus size={16} /></button>
+          <div>
+            <p className="text-sm font-semibold" style={{ color: '#e9edef' }}>
+              {user?.username}
+            </p>
+            <p className="text-[11px]" style={{ color: '#8696a0' }}>Online</p>
           </div>
         </div>
-        
-        <div className="space-y-1">
-          {rooms.map(room => (
-            <button
-              key={room.id}
-              onClick={() => handleRoomSelect(room)}
-              className={`w-full text-left px-3 py-2.5 rounded-sm flex items-center text-sm transition-all ${
-                activeRoom?.id === room.id ? 'bg-blue-600 text-white font-medium shadow-sm' : 'hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              <Hash size={16} className={`mr-2 shrink-0 ${activeRoom?.id === room.id ? 'text-blue-200' : 'text-zinc-600'}`} />
-              <span className="truncate">{room.name}</span>
-              {room.isPrivate && <span className="ml-auto text-[10px] bg-zinc-800 px-1.5 py-0.5 rounded-sm">Privatno</span>}
-            </button>
-          ))}
+
+        <button
+          onClick={logout}
+          className="p-2 rounded-full transition-all hover:brightness-125"
+          style={{ color: '#8696a0', background: 'transparent' }}
+          title="Odjavi se"
+        >
+          <LogOut size={18} />
+        </button>
+      </div>
+
+      {/* ── Search bar ── */}
+      <div className="px-3 py-2" style={{ background: '#111b21' }}>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: '#202c33' }}>
+          <Search size={14} style={{ color: '#8696a0' }} />
+          <input
+            type="text"
+            placeholder="Pretraži sobe..."
+            className="flex-1 bg-transparent text-sm outline-none"
+            style={{ color: '#e9edef' }}
+          />
         </div>
+      </div>
+
+      {/* ── Section header ── */}
+      <div className="flex items-center justify-between px-4 pt-3 pb-1.5">
+        <span className="text-[11px] font-semibold uppercase tracking-widest"
+          style={{ color: '#8696a0' }}>
+          Sobe
+        </span>
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={onOpenJoin}
+            className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-colors hover:brightness-125"
+            style={{ color: '#8696a0' }}
+            title="Pridruži se sobi"
+          >
+            <LinkIcon size={12} />
+            <span>Pridruži</span>
+          </button>
+          <button
+            onClick={onOpenCreate}
+            className="p-1.5 rounded-md transition-colors hover:brightness-125"
+            style={{ color: '#00a884' }}
+            title="Nova soba"
+          >
+            <Plus size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* ── Room list ── */}
+      <div className="flex-1 overflow-y-auto">
+        {rooms.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-6 gap-3">
+            <div className="w-14 h-14 rounded-full flex items-center justify-center"
+              style={{ background: '#202c33' }}>
+              <Hash size={22} style={{ color: '#8696a0' }} />
+            </div>
+            <p className="text-sm text-center" style={{ color: '#8696a0' }}>
+              Nema soba još uvek
+            </p>
+            <button
+              onClick={onOpenCreate}
+              className="text-[13px] font-semibold px-4 py-2 rounded-full transition-opacity hover:opacity-80"
+              style={{ color: '#111b21', background: '#00a884' }}
+            >
+              Napravi prvu
+            </button>
+          </div>
+        ) : (
+          rooms.map(room => {
+            const isActive = activeRoom?.id === room.id;
+            return (
+              <button
+                key={room.id}
+                onClick={() => handleRoomSelect(room)}
+                className="w-full flex items-center gap-3 px-4 py-3.5 transition-colors text-left"
+                style={{
+                  background: isActive ? '#2a3942' : 'transparent',
+                  borderLeft: isActive ? '3px solid #00a884' : '3px solid transparent',
+                }}
+              >
+                <div
+                  className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 text-base font-bold"
+                  style={{
+                    background: isActive
+                      ? 'linear-gradient(135deg, #00a884 0%, #0097a7 100%)'
+                      : '#2a3942',
+                    color: isActive ? '#fff' : '#8696a0',
+                  }}
+                >
+                  {room.name.charAt(0).toUpperCase()}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="text-sm font-medium truncate"
+                      style={{ color: isActive ? '#e9edef' : '#d1d7db' }}
+                    >
+                      {room.name}
+                    </span>
+                    {room.isPrivate && (
+                      <Lock size={10} style={{ color: '#8696a0', flexShrink: 0 }} />
+                    )}
+                  </div>
+                  <p className="text-[12px] truncate mt-0.5" style={{ color: '#8696a0' }}>
+                    Tap to open chat
+                  </p>
+                </div>
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Hash, Lock, Link as LinkIcon } from 'lucide-react';
 
 const THEME_COLORS = [
-  { name: 'Svetla (Default)', hex: '#ffffff' },
-  { name: 'Cink', hex: '#f4f4f5' },
-  { name: 'Plava', hex: '#eff6ff' },
-  { name: 'Smaragdna', hex: '#ecfdf5' },
-  { name: 'Ljubičasta', hex: '#faf5ff' },
-  { name: 'Ružičasta', hex: '#fff1f2' },
+  { name: 'Default', hex: '#0b141a' },
+  { name: 'Tamnoplava', hex: '#0d1b2a' },
+  { name: 'Tamnozelena', hex: '#0a1f14' },
+  { name: 'Tamnoljubičasta', hex: '#16101f' },
+  { name: 'Tamnocrvena', hex: '#1f0d0d' },
+  { name: 'Antracit', hex: '#151515' },
 ];
 
 interface CreateRoomModalProps {
@@ -34,58 +34,128 @@ export function CreateRoomModal({ isOpen, onClose, onCreate }: CreateRoomModalPr
   };
 
   return (
-    <div className="fixed inset-0 bg-zinc-950/50 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-md border border-zinc-200 shadow-lg rounded-sm overflow-hidden">
-        <div className="p-4 border-b border-zinc-200 flex justify-between items-center bg-zinc-50">
-          <h2 className="font-bold text-zinc-900 tracking-tight">Nova Soba</h2>
-          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-900 transition-colors"><X size={20} /></button>
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        className="w-full max-w-md rounded-xl overflow-hidden shadow-2xl"
+        style={{ background: '#202c33' }}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-5 py-4"
+          style={{ background: '#2a3942', borderBottom: '1px solid #3b4a54' }}
+        >
+          <div className="flex items-center gap-2">
+            <Hash size={16} style={{ color: '#00a884' }} />
+            <h2 className="font-semibold text-sm" style={{ color: '#e9edef' }}>Nova Soba</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full transition-colors hover:brightness-125"
+            style={{ color: '#aebac1', background: '#3b4a54' }}
+          >
+            <X size={14} />
+          </button>
         </div>
-        
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+
+        <form onSubmit={handleSubmit} className="px-5 py-5 space-y-5">
+          {/* Name input */}
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 mb-1.5">Naziv sobe</label>
-            <input 
-              type="text" 
-              required 
-              placeholder="npr. Chat Soba 1"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-2.5 bg-zinc-50 border border-zinc-300 rounded-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-colors text-sm"
-            />
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: '#8696a0' }}>
+              Naziv sobe
+            </label>
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg"
+              style={{ background: '#2a3942', border: '1px solid #3b4a54' }}>
+              <Hash size={14} style={{ color: '#8696a0' }} />
+              <input
+                type="text"
+                required
+                placeholder="npr. Opšta diskusija"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="flex-1 bg-transparent text-sm outline-none"
+                style={{ color: '#e9edef' }}
+              />
+            </div>
           </div>
 
+          {/* Theme picker */}
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 mb-2">Tema sobe</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2.5"
+              style={{ color: '#8696a0' }}>
+              Tema sobe
+            </label>
             <div className="flex gap-2 flex-wrap">
               {THEME_COLORS.map((color) => (
                 <button
                   key={color.hex}
                   type="button"
                   onClick={() => setThemeColor(color.hex)}
-                  className={`w-8 h-8 rounded-sm border-2 transition-all ${
-                    themeColor === color.hex ? 'border-blue-600 scale-110 shadow-sm' : 'border-zinc-200 hover:border-zinc-400'
-                  }`}
-                  style={{ backgroundColor: color.hex }}
+                  className="w-8 h-8 rounded-full transition-all"
+                  style={{
+                    background: color.hex,
+                    border: themeColor === color.hex
+                      ? '2.5px solid #00a884'
+                      : '2.5px solid #3b4a54',
+                    transform: themeColor === color.hex ? 'scale(1.15)' : 'scale(1)',
+                    boxShadow: themeColor === color.hex ? '0 0 0 2px #00a88433' : 'none',
+                  }}
                   title={color.name}
                 />
               ))}
             </div>
           </div>
 
-          <label className="flex items-center gap-3 cursor-pointer p-3 border border-zinc-200 rounded-sm hover:bg-zinc-50 transition-colors">
-            <input 
-              type="checkbox" 
-              checked={isPrivate}
-              onChange={(e) => setIsPrivate(e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-zinc-300 rounded focus:ring-blue-600"
-            />
-            <div>
-              <div className="text-sm font-semibold text-zinc-900">Privatna soba (1-na-1)</div>
-              <div className="text-xs text-zinc-500">Samo osobe sa kodom mogu da pristupe.</div>
+          {/* Private toggle */}
+          <button
+            type="button"
+            onClick={() => setIsPrivate(!isPrivate)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left"
+            style={{
+              background: isPrivate ? '#0d2e24' : '#2a3942',
+              border: `1px solid ${isPrivate ? '#00a884' : '#3b4a54'}`,
+            }}
+          >
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+              style={{ background: isPrivate ? '#00a88433' : '#3b4a54' }}
+            >
+              <Lock size={14} style={{ color: isPrivate ? '#00a884' : '#8696a0' }} />
             </div>
-          </label>
+            <div className="flex-1">
+              <p className="text-sm font-semibold" style={{ color: '#e9edef' }}>Privatna soba</p>
+              <p className="text-[12px]" style={{ color: '#8696a0' }}>
+                Pristup samo putem invite koda
+              </p>
+            </div>
+            {/* Custom toggle */}
+            <div
+              className="w-10 h-5 rounded-full transition-all relative"
+              style={{ background: isPrivate ? '#00a884' : '#3b4a54' }}
+            >
+              <span
+                className="absolute top-0.5 w-4 h-4 rounded-full transition-all"
+                style={{
+                  background: '#fff',
+                  left: isPrivate ? '22px' : '2px',
+                }}
+              />
+            </div>
+          </button>
 
-          <button type="submit" className="w-full py-2.5 bg-zinc-900 text-white font-semibold text-sm rounded-sm hover:bg-zinc-800 transition-colors">
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full py-3 rounded-lg text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
+            style={{
+              background: 'linear-gradient(135deg, #00a884 0%, #0097a7 100%)',
+              color: '#fff',
+            }}
+          >
             Kreiraj Sobu
           </button>
         </form>
@@ -93,6 +163,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreate }: CreateRoomModalPr
     </div>
   );
 }
+
 
 interface JoinRoomModalProps {
   isOpen: boolean;
@@ -114,25 +185,65 @@ export function JoinRoomModal({ isOpen, onClose, onJoin }: JoinRoomModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-zinc-950/50 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-sm border border-zinc-200 shadow-lg rounded-sm overflow-hidden">
-        <div className="p-4 border-b border-zinc-200 flex justify-between items-center bg-zinc-50">
-          <h2 className="font-bold text-zinc-900 tracking-tight">Pridruži se sobi</h2>
-          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-900 transition-colors"><X size={20} /></button>
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        className="w-full max-w-sm rounded-xl overflow-hidden shadow-2xl"
+        style={{ background: '#202c33' }}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-5 py-4"
+          style={{ background: '#2a3942', borderBottom: '1px solid #3b4a54' }}
+        >
+          <div className="flex items-center gap-2">
+            <LinkIcon size={15} style={{ color: '#00a884' }} />
+            <h2 className="font-semibold text-sm" style={{ color: '#e9edef' }}>Pridruži se sobi</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full"
+            style={{ color: '#aebac1', background: '#3b4a54' }}
+          >
+            <X size={14} />
+          </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+
+        <form onSubmit={handleSubmit} className="px-5 py-5 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 mb-1.5">Invite Kod</label>
-            <input 
-              type="text" 
-              required 
-              placeholder="npr. 123e4567-e89b..."
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: '#8696a0' }}>
+              Invite Kod
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Zalepi kod ovde..."
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
-              className="w-full p-2.5 bg-zinc-50 border border-zinc-300 rounded-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-colors text-sm font-mono"
+              className="w-full px-4 py-2.5 rounded-lg text-sm font-mono outline-none"
+              style={{
+                background: '#2a3942',
+                color: '#e9edef',
+                border: '1px solid #3b4a54',
+              }}
             />
+            <p className="text-[11px] mt-1.5" style={{ color: '#8696a0' }}>
+              Kod dobijaš od vlasnika sobe ili iz podešavanja sobe.
+            </p>
           </div>
-          <button type="submit" className="w-full py-2.5 bg-blue-600 text-white font-semibold text-sm rounded-sm hover:bg-blue-700 transition-colors">
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-lg text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
+            style={{
+              background: 'linear-gradient(135deg, #00a884 0%, #0097a7 100%)',
+              color: '#fff',
+            }}
+          >
             Pridruži se
           </button>
         </form>

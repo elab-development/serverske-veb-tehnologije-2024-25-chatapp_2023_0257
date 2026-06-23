@@ -6,9 +6,16 @@ import { ENV } from '../config/env';
 export const getRooms = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { search, sortBy } = req.query;
+        const userId = req.user!.userId;
 
         const rooms = await prisma.room.findMany({
-            where: search ? { name: { contains: String(search), mode: 'insensitive' } } : {},
+            where: {
+                OR: [
+                    { isPrivate: false },
+                    { members: { some: { userId: userId } } }
+                ],
+                name: search ? { contains: String(search), mode: 'insensitive' } : undefined,
+            },
             orderBy: { createdAt: sortBy === 'oldest' ? 'asc' : 'desc' }
         });
 
@@ -17,7 +24,6 @@ export const getRooms = async (req: AuthRequest, res: Response): Promise<void> =
         res.status(500).json({ error: 'Greška pri povlačenju soba.' });
     }
 };
-
 export const createRoom = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { name, isPrivate, themeColor } = req.body;
