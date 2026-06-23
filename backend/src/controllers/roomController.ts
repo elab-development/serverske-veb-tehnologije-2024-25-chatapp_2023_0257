@@ -20,12 +20,12 @@ export const getRooms = async (req: AuthRequest, res: Response): Promise<void> =
 
 export const createRoom = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const { name, isPrivate } = req.body;
+        const { name, isPrivate, themeColor } = req.body;
         const userId = req.user!.userId;
 
         const newRoom = await prisma.$transaction(async (prismaClient) => {
             const room = await prismaClient.room.create({
-                data: { name, isPrivate, creatorId: userId }
+                data: { name, isPrivate, themeColor, creatorId: userId }
             });
             await prismaClient.roomMember.create({
                 data: { roomId: room.id, userId }
@@ -166,24 +166,24 @@ export const joinWithInvite = async (req: AuthRequest, res: Response): Promise<v
 };
 
 export const updateRoomTheme = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const roomId = Number(req.params.roomId);
-    const { themeColor } = req.body;
-    const userId = req.user!.userId;
+    try {
+        const roomId = Number(req.params.roomId);
+        const { themeColor } = req.body;
+        const userId = req.user!.userId;
 
-    const room = await prisma.room.findUnique({ where: { id: roomId } });
-    if (!room || room.creatorId !== userId) {
-      res.status(403).json({ error: 'Samo kreator može menjati temu sobe.' });
-      return;
+        const room = await prisma.room.findUnique({ where: { id: roomId } });
+        if (!room || room.creatorId !== userId) {
+            res.status(403).json({ error: 'Samo kreator može menjati temu sobe.' });
+            return;
+        }
+
+        const updatedRoom = await prisma.room.update({
+            where: { id: roomId },
+            data: { themeColor }
+        });
+
+        res.status(200).json({ message: 'Tema uspešno promenjena', themeColor: updatedRoom.themeColor });
+    } catch (error) {
+        res.status(500).json({ error: 'Greška pri promeni teme.' });
     }
-
-    const updatedRoom = await prisma.room.update({
-      where: { id: roomId },
-      data: { themeColor }
-    });
-
-    res.status(200).json({ message: 'Tema uspešno promenjena', themeColor: updatedRoom.themeColor });
-  } catch (error) {
-    res.status(500).json({ error: 'Greška pri promeni teme.' });
-  }
 };
