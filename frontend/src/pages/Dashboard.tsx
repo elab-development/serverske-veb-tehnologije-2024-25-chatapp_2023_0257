@@ -11,33 +11,48 @@ export default function Dashboard() {
     const [rooms, setRooms] = useState<any[]>([]);
     const [activeRoom, setActiveRoom] = useState<any | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
-    const [typingUsers, setTypingUsers] = useState<string[]>([]); // NOVO: State za kuckanje
+    const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
     const socketRef = useRef<Socket | null>(null);
+    const activeRoomRef = useRef<any | null>(null);
+
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isJoinOpen, setIsJoinOpen] = useState(false);
 
     useEffect(() => {
+        activeRoomRef.current = activeRoom;
+    }, [activeRoom]);
+
+    useEffect(() => {
         socketRef.current = io('http://localhost:5000', { auth: { token } });
 
         socketRef.current.on('receiveMessage', (msg: any) => {
+            if (msg.roomId !== activeRoomRef.current?.id?.toString()) return;
             setMessages((prev) => [...prev, msg]);
         });
 
-        socketRef.current.on('userTyping', (data: { username: string }) => {
+        socketRef.current.on('userTyping', (data: { username: string; roomId: string }) => {
+            if (data.roomId !== activeRoomRef.current?.id?.toString()) return;
             setTypingUsers(prev => prev.includes(data.username) ? prev : [...prev, data.username]);
         });
 
-        socketRef.current.on('userStoppedTyping', (data: { username: string }) => {
+        socketRef.current.on('userStoppedTyping', (data: { username: string; roomId: string }) => {
+            if (data.roomId !== activeRoomRef.current?.id?.toString()) return;
             setTypingUsers(prev => prev.filter(u => u !== data.username));
         });
-        socketRef.current.on('messageDeletedNotify', (data: { messageId: number }) => {
+
+        socketRef.current.on('messageDeletedNotify', (data: { messageId: number; roomId: string }) => {
+            if (data.roomId !== activeRoomRef.current?.id?.toString()) return;
             setMessages(prev => prev.map(msg =>
-                msg.id === data.messageId ? { ...msg, isDeleted: true, content: 'Ova poruka je obrisana.' } : msg
+                msg.id === data.messageId
+                    ? { ...msg, isDeleted: true, content: 'Ova poruka je obrisana.' }
+                    : msg
             ));
         });
+
         socketRef.current.on('userJoinedNotify', (sysMsg: any) => {
+            if (sysMsg.roomId && sysMsg.roomId !== activeRoomRef.current?.id?.toString()) return;
             setMessages((prev) => [...prev, { id: Date.now() + Math.random(), ...sysMsg }]);
         });
 
@@ -48,19 +63,24 @@ export default function Dashboard() {
         api.get('/rooms').then(res => setRooms(res.data)).catch(console.error);
     };
 
-    useEffect(() => {
-        fetchRooms();
-    }, []);
+    useEffect(() => { fetchRooms(); }, []);
 
     useEffect(() => {
-        if (activeRoom) {
-            setTypingUsers([]);
-            api.get(`/rooms/${activeRoom.id}/messages`).then(res => {
-                setMessages(res.data.reverse());
-            });
-            socketRef.current?.emit('joinRoom', { roomId: activeRoom.id.toString(), username: user?.username });
-        }
-    }, [activeRoom, user]);
+        if (!activeRoom) return;
+
+        setTypingUsers([]);
+        api.get(`/rooms/${activeRoom.id}/messages`).then(res => {
+            setMessages(res.data.reverse());
+        });
+        socketRef.current?.emit('joinRoom', {
+            roomId: activeRoom.id.toString(),
+            username: user?.username,
+        });
+
+        return () => {
+            socketRef.current?.emit('leaveRoom', { roomId: activeRoom.id.toString() });
+        };
+    }, [activeRoom?.id]);
 
     const handleSendMessage = async (content: string) => {
         if (!activeRoom) return;
@@ -68,11 +88,12 @@ export default function Dashboard() {
         const tempId = Date.now();
         const optimisticMessage = {
             id: tempId,
-            content: content,
+            content,
             senderId: user?.id,
+            roomId: activeRoom.id.toString(),
             createdAt: new Date().toISOString(),
             sender: { username: user?.username },
-            isSending: true
+            isSending: true,
         };
 
         setMessages(prev => [...prev, optimisticMessage]);
@@ -84,7 +105,7 @@ export default function Dashboard() {
 
             socketRef.current?.emit('sendMessage', {
                 roomId: activeRoom.id.toString(),
-                message: realMessage
+                message: realMessage,
             });
         } catch (err) {
             console.error('Greška pri slanju', err);
@@ -97,22 +118,27 @@ export default function Dashboard() {
         try {
             await api.delete(`/rooms/messages/${messageId}`);
             setMessages(prev => prev.map(msg =>
-                msg.id === messageId ? { ...msg, isDeleted: true, content: 'Ova poruka je obrisana.' } : msg
+                msg.id === messageId
+                    ? { ...msg, isDeleted: true, content: 'Ova poruka je obrisana.' }
+                    : msg
             ));
             socketRef.current?.emit('deleteMessage', {
                 roomId: activeRoom.id.toString(),
-                messageId: messageId
+                messageId,
             });
         } catch (err) {
             alert('Greška pri brisanju poruke.');
         }
-    }
+    };
+
     const handleUpdateTheme = async (themeColor: string) => {
         if (!activeRoom) return;
         try {
             const res = await api.patch(`/rooms/${activeRoom.id}/theme`, { themeColor });
             setActiveRoom((prev: any) => ({ ...prev, themeColor: res.data.themeColor }));
-            setRooms(prev => prev.map(r => r.id === activeRoom.id ? { ...r, themeColor: res.data.themeColor } : r));
+            setRooms(prev => prev.map(r =>
+                r.id === activeRoom.id ? { ...r, themeColor: res.data.themeColor } : r
+            ));
         } catch (err) {
             alert('Samo kreator može menjati boju sobe.');
         }
@@ -120,8 +146,10 @@ export default function Dashboard() {
 
     const handleTyping = (isTyping: boolean) => {
         if (!activeRoom || !user) return;
-        const event = isTyping ? 'typing' : 'stopTyping';
-        socketRef.current?.emit(event, { roomId: activeRoom.id.toString(), username: user.username });
+        socketRef.current?.emit(isTyping ? 'typing' : 'stopTyping', {
+            roomId: activeRoom.id.toString(),
+            username: user.username,
+        });
     };
 
     const handleCreateRoom = async (name: string, isPrivate: boolean, themeColor: string) => {
@@ -160,7 +188,9 @@ export default function Dashboard() {
                 setActiveRoom={setActiveRoom}
                 onOpenCreate={() => setIsCreateOpen(true)}
                 onOpenJoin={() => setIsJoinOpen(true)}
-                className={`absolute md:relative z-30 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+                className={`absolute md:relative z-30 transition-transform duration-300 ease-in-out ${
+                    isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+                }`}
                 onRoomSelectMobile={() => setIsMobileMenuOpen(false)}
             />
 
@@ -175,8 +205,16 @@ export default function Dashboard() {
                 typingUsers={typingUsers}
             />
 
-            <CreateRoomModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreate={handleCreateRoom} />
-            <JoinRoomModal isOpen={isJoinOpen} onClose={() => setIsJoinOpen(false)} onJoin={handleJoinRoom} />
+            <CreateRoomModal
+                isOpen={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+                onCreate={handleCreateRoom}
+            />
+            <JoinRoomModal
+                isOpen={isJoinOpen}
+                onClose={() => setIsJoinOpen(false)}
+                onJoin={handleJoinRoom}
+            />
         </div>
     );
 }
