@@ -24,7 +24,6 @@ router.get('/:roomId/invite', getInviteCode);
 
 router.patch('/:roomId/theme', updateRoomTheme);
 
-// ovde cepamo konkretnu poruku 
 router.delete('/messages/:messageId', softDeleteMessage);
 
 export default router;

@@ -31,7 +31,6 @@ export const softDeleteMessage = async (req: AuthRequest, res: Response): Promis
   try {
     const messageId = Number(req.params.messageId);
     const userId = req.user!.userId;
-
     const message = await prisma.message.findUnique({ where: { id: messageId } });
     if (!message || message.senderId !== userId) {
       res.status(403).json({ error: 'Možete obrisati samo svoje poruke.' });
@@ -45,6 +44,7 @@ export const softDeleteMessage = async (req: AuthRequest, res: Response): Promis
 
     res.status(200).json({ message: 'Poruka je uklonjena.' });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Greška pri brisanju poruke.' });
   }
 };
