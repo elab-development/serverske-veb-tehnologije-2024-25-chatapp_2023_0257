@@ -3,6 +3,7 @@ import { useAuthStore } from './store/useAuthStore';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import type { JSX } from 'react/jsx-runtime';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const token = useAuthStore((state) => state.token);
