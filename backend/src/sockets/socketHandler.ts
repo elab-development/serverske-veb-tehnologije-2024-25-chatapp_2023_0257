@@ -54,5 +54,11 @@ export const setupSockets = (io: Server) => {
         socket.on('disconnect', () => {
             console.log(`Klijent diskonektovan: ${socket.id}`);
         });
+        socket.on('themeUpdate', (data: { roomId: string; themeColor: string }) => {
+            socket.to(data.roomId).emit('themeUpdated', {
+                roomId: data.roomId,
+                themeColor: data.themeColor,
+            });
+        });
     });
 };

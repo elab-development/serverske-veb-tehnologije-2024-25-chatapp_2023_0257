@@ -3,12 +3,17 @@ import cors from 'cors';
 import apiRoutes from './routes/index';
 import { apiLimiter } from './middleware/rateLimiter';
 import path from 'path/win32';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 
 const app: Application = express();
 
 app.use('/api', apiLimiter);
 app.use(cors());
 app.use(express.json());
+
+// Swagger dokumentacija
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', poruka: 'Express & TS Backend je spreman!' });

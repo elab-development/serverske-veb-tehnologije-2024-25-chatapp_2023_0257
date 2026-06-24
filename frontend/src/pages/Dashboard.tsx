@@ -50,7 +50,13 @@ export default function Dashboard() {
                     : msg
             ));
         });
-
+        socketRef.current.on('themeUpdated', (data: { roomId: string; themeColor: string }) => {
+            if (data.roomId !== activeRoomRef.current?.id?.toString()) return;
+            setActiveRoom((prev: any) => ({ ...prev, themeColor: data.themeColor }));
+            setRooms(prev => prev.map(r =>
+                r.id.toString() === data.roomId ? { ...r, themeColor: data.themeColor } : r
+            ));
+        });
         socketRef.current.on('userJoinedNotify', (sysMsg: any) => {
             if (sysMsg.roomId && sysMsg.roomId !== activeRoomRef.current?.id?.toString()) return;
             setMessages((prev) => [...prev, { id: Date.now() + Math.random(), ...sysMsg }]);
@@ -139,6 +145,10 @@ export default function Dashboard() {
             setRooms(prev => prev.map(r =>
                 r.id === activeRoom.id ? { ...r, themeColor: res.data.themeColor } : r
             ));
+            socketRef.current?.emit('themeUpdate', {
+                roomId: activeRoom.id.toString(),
+                themeColor: res.data.themeColor,
+            });
         } catch (err) {
             alert('Samo kreator može menjati boju sobe.');
         }
@@ -188,9 +198,8 @@ export default function Dashboard() {
                 setActiveRoom={setActiveRoom}
                 onOpenCreate={() => setIsCreateOpen(true)}
                 onOpenJoin={() => setIsJoinOpen(true)}
-                className={`absolute md:relative z-30 transition-transform duration-300 ease-in-out ${
-                    isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-                }`}
+                className={`absolute md:relative z-30 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+                    }`}
                 onRoomSelectMobile={() => setIsMobileMenuOpen(false)}
             />
 
